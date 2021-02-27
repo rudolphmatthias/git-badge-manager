@@ -1,0 +1,12 @@
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: ./
+        with:
+          total-coverage: "15"
+          api-key: ${{ secrets.BADGE_API_KEY }}
+          api-url: ${{ secrets.BADGE_API_URL }}

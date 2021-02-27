@@ -1,0 +1,31 @@
+name: 'Upload Coverage Badge'
+description: 'This actions requires an ApiGateway in AWS. Deploy the cdk stack in this repository first.'
+inputs:
+  total-coverage:
+    description: "Coverage in percent [1-100]"
+    required: true
+  api-key:
+    description: "The api key of the AWS ApiGateway"
+    required: true
+  api-url:
+    description: "The api url of the AWS ApiGateway"
+    required: true
+outputs:
+  svg-url:
+    description: "The resulting URL of generated svg"
+    value: ${{ steps.random-number-generator.outputs.random-id }}
+runs:
+  using: "composite"
+  steps:
+    - name: Set env
+      run: |
+        echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
+        echo "PROJECT=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
+      shell: bash
+    - name: "Setup SSH Keys and known_hosts"
+      run: |
+        curl --location --request POST '${{inputs.api-url}}' \
+        --header 'x-api-key: ${{inputs.api-key}}' \
+        --header 'Content-Type: application/json' \
+        --data-raw '{"total_coverage": ${{inputs.total-coverage}},"branch": "${{env.BRANCH}}","project": "${{env.PROJECT}}"}'
+      shell: bash
