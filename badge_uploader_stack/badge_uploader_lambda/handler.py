@@ -4,7 +4,7 @@ import json
 from io import BytesIO
 from pybadges import badge
 
-BADGE_MANAGER_BUCKET = os.environ['BADGE_MANAGER_BUCKET']
+BADGE_UPLOADER_BUCKET = os.environ['BADGE_UPLOADER_BUCKET']
 REGION = os.environ['REGION']
 s3_client = boto3.client('s3')
 
@@ -33,12 +33,12 @@ def main(event, context):
 
     # upload
     s3_client.upload_fileobj(Fileobj=BytesIO(svg_file_string.encode()),
-                             Bucket=BADGE_MANAGER_BUCKET,
+                             Bucket=BADGE_UPLOADER_BUCKET,
                              Key=f"{project}/{branch}.svg")
 
     # output
     return {
         "statusCode": 200,
         "headers": {"Content-Type": "application/json"},
-        "body": json.dumps({"url": f"https://s3.{REGION}.amazonaws.com/{BADGE_MANAGER_BUCKET}/{project}/{branch}.svg"})
+        "body": json.dumps({"url": f"https://s3.amazonaws.com/{BADGE_UPLOADER_BUCKET}/{project}/{branch}.svg"})
     }

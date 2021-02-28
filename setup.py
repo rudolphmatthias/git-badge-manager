@@ -6,7 +6,7 @@ with open("README.md") as fp:
 
 
 setuptools.setup(
-    name="badge_manager",
+    name="badge_uploader",
     version="0.0.1",
 
     description="A sample CDK Python app",
@@ -15,8 +15,8 @@ setuptools.setup(
 
     author="author",
 
-    package_dir={"": "badge_manager"},
-    packages=setuptools.find_packages(where="badge_manager"),
+    package_dir={"": "badge_uploader"},
+    packages=setuptools.find_packages(where="badge_uploader"),
 
     install_requires=[
         "aws-cdk.core==1.89.0",

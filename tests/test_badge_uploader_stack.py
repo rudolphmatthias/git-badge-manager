@@ -5,13 +5,13 @@ import warnings
 from unittest import TestCase
 
 from aws_cdk import core
-from badge_manager.badge_manager_stack import BadgeManagerStack
+from badge_uploader_stack.badge_uploader_stack import BadgeUploaderStack
 
 
 def get_template():
     app = core.App()
-    BadgeManagerStack(app, "badge-manager")
-    return json.dumps(app.synth().get_stack("badge-manager").template)
+    BadgeUploaderStack(app, "badge-uploader")
+    return json.dumps(app.synth().get_stack("badge-uploader").template)
 
 
 class Tests(TestCase):

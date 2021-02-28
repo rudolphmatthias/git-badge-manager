@@ -2,10 +2,10 @@
 
 from aws_cdk import core
 
-from badge_manager.badge_manager_stack import BadgeManagerStack
+from badge_uploader_stack.badge_uploader_stack import BadgeUploaderStack
 
 
 app = core.App()
-BadgeManagerStack(app, "badge-manager", env={'region': 'us-east-1'})
+BadgeUploaderStack(app, "git-badge-uploader", env={'region': 'us-east-1'})
 
 app.synth()

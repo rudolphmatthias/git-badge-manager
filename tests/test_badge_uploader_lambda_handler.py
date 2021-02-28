@@ -31,11 +31,11 @@ class Tests(TestCase):
 
     @patch("boto3.client")
     def test_main(self, boto3_client_mock):
-        bucket = "badge-manager-test"
+        bucket = "badge-uploader-test"
         region = "eu-west-1"
-        os.environ['BADGE_MANAGER_BUCKET'] = bucket
+        os.environ['BADGE_UPLOADER_BUCKET'] = bucket
         os.environ['REGION'] = region
-        from badge_manager.badge_manager_lambda import handler
+        from badge_uploader_stack.badge_uploader_lambda import handler
 
         event = {
             "body": json.dumps({
@@ -49,7 +49,7 @@ class Tests(TestCase):
                 "statusCode": 200,
                 "headers": {"Content-Type": "application/json"},
                 "body": json.dumps(
-                    {"url": f"https://s3.{region}.amazonaws.com/{bucket}/project/branch.svg"})
+                    {"url": f"https://s3.amazonaws.com/{bucket}/project/branch.svg"})
             },
             handler.main(event=event, context=None)
         )

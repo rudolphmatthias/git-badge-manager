@@ -6,7 +6,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - uses: ./
+        id: badge-uploader
         with:
           total-coverage: "15"
           api-key: ${{ secrets.BADGE_API_KEY }}
           api-url: ${{ secrets.BADGE_API_URL }}
+      - name: Echo
+        run: |
+          echo ${{ steps.badge-uploader.outputs.url }}

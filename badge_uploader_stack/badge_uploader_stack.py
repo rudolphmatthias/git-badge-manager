@@ -10,7 +10,7 @@ from aws_cdk import (
 from utils.cdk_utils import PythonS3CodeAsset
 
 
-class BadgeManagerStack(core.Stack):
+class BadgeUploaderStack(core.Stack):
 
     def __init__(self, scope: core.Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
@@ -23,7 +23,7 @@ class BadgeManagerStack(core.Stack):
             public_read_access=True
         )
 
-        badge_manager_handler = aws_lambda.Function(
+        badge_uploader_handler = aws_lambda.Function(
             scope=self,
             id="Handler",
             runtime=aws_lambda.Runtime.PYTHON_3_8,
@@ -33,20 +33,20 @@ class BadgeManagerStack(core.Stack):
             code=PythonS3CodeAsset(
                 scope=self,
                 id='HandlerCode',
-                work_dir=str(path / 'badge_manager_lambda'),
+                work_dir=str(path / 'badge_uploader_lambda'),
                 sources=['handler.py'],
                 runtime=aws_lambda.Runtime.PYTHON_3_8),
             handler='handler.main',
-            environment={'BADGE_MANAGER_BUCKET': bucket.bucket_name, 'REGION': self.region}
+            environment={'BADGE_UPLOADER_BUCKET': bucket.bucket_name, 'REGION': self.region}
         )
 
-        bucket.grant_read_write(identity=badge_manager_handler, objects_key_pattern="*.svg")
+        bucket.grant_read_write(identity=badge_uploader_handler, objects_key_pattern="*.svg")
 
         api = aws_apigateway.LambdaRestApi(
             scope=self,
             id="Api",
-            rest_api_name="BadgeManagerApi",
-            handler=badge_manager_handler
+            rest_api_name="BadgeUploaderApi",
+            handler=badge_uploader_handler
         )
 
         api_key = api.add_api_key(id="ApiKey")

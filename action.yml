@@ -11,21 +11,25 @@ inputs:
     description: "The api url of the AWS ApiGateway"
     required: true
 outputs:
-  svg-url:
-    description: "The resulting URL of generated svg"
-    value: ${{ steps.random-number-generator.outputs.random-id }}
+  url:
+    description: "Random number"
+    value: ${{ steps.call-badge-api.outputs.url }}
 runs:
   using: "composite"
   steps:
-    - name: Set env
+    - id: call-badge-api
+      name: "Call Badge API"
       run: |
-        echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
-        echo "PROJECT=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
-      shell: bash
-    - name: "Setup SSH Keys and known_hosts"
-      run: |
-        curl --location --request POST '${{inputs.api-url}}' \
+        github_ref=${{github.ref}}
+        github_repository=${{github.repository}}
+        echo {\"total_coverage\": ${{inputs.total-coverage}}, \
+              \"project\": \"${github_ref##*/}\", \
+              \"branch\": \"${github_repository##*/}\"} \
+        >> data.json
+        response=$(curl -s --request POST '${{inputs.api-url}}' \
         --header 'x-api-key: ${{inputs.api-key}}' \
         --header 'Content-Type: application/json' \
-        --data-raw '{"total_coverage": ${{inputs.total-coverage}},"branch": "${{env.BRANCH}}","project": "${{env.PROJECT}}"}'
+        -d @data.json)
+        echo "::set-output name=url::$(echo $response | jq '.url')"
       shell: bash
+
