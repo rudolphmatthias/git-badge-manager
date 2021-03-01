@@ -31,10 +31,8 @@ class Tests(TestCase):
 
     @patch("boto3.client")
     def test_main(self, boto3_client_mock):
-        bucket = "badge-uploader-test"
-        region = "eu-west-1"
+        bucket = "test-bucket"
         os.environ['BADGE_UPLOADER_BUCKET'] = bucket
-        os.environ['REGION'] = region
         from badge_uploader_stack.badge_uploader_lambda import handler
 
         event = {
@@ -44,12 +42,9 @@ class Tests(TestCase):
                 "project": "project"
             })
         }
-        self.assertEquals(
-            {
-                "statusCode": 200,
-                "headers": {"Content-Type": "application/json"},
-                "body": json.dumps(
-                    {"url": f"https://s3.amazonaws.com/{bucket}/project/branch.svg"})
-            },
+
+        self.assertEqual(
+            {'statusCode': 200, 'headers': {'Content-Type': 'application/json'},
+             'body': '{"url": "https://s3.amazonaws.com/test-bucket/215fbc5fdf64b4f4324326534bba1faea1b12bfe2aaf530390ba79442b5e36a5.svg"}'},
             handler.main(event=event, context=None)
         )

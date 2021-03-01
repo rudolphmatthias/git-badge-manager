@@ -4,15 +4,15 @@ inputs:
   total-coverage:
     description: "Coverage in percent [1-100]"
     required: true
-  api-key:
+  aws-api-key:
     description: "The api key of the AWS ApiGateway"
     required: true
-  api-url:
+  aws-api-url:
     description: "The api url of the AWS ApiGateway"
     required: true
 outputs:
   url:
-    description: "Random number"
+    description: "Url of resulting svg"
     value: ${{ steps.call-badge-api.outputs.url }}
 runs:
   using: "composite"
@@ -26,8 +26,8 @@ runs:
               \"project\": \"${github_ref##*/}\", \
               \"branch\": \"${github_repository##*/}\"} \
         >> data.json
-        response=$(curl -s --request POST '${{inputs.api-url}}' \
-        --header 'x-api-key: ${{inputs.api-key}}' \
+        response=$(curl -s --request POST '${{inputs.aws-api-url}}' \
+        --header 'x-api-key: ${{inputs.aws-api-key}}' \
         --header 'Content-Type: application/json' \
         -d @data.json)
         echo "::set-output name=url::$(echo $response | jq '.url')"

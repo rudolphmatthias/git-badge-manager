@@ -56,3 +56,5 @@ class BadgeUploaderStack(core.Stack):
             api_key=api_key,
             throttle=aws_apigateway.ThrottleSettings(burst_limit=2, rate_limit=10)
         )
+
+        # TODO setup cloudfront in front of S3

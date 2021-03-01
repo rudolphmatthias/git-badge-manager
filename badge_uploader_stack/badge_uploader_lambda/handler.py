@@ -3,9 +3,9 @@ import boto3
 import json
 from io import BytesIO
 from pybadges import badge
+import hashlib
 
 BADGE_UPLOADER_BUCKET = os.environ['BADGE_UPLOADER_BUCKET']
-REGION = os.environ['REGION']
 s3_client = boto3.client('s3')
 
 
@@ -14,6 +14,9 @@ def main(event, context):
     total_coverage = body['total_coverage']
     project = body['project']
     branch = body['branch']
+
+    # anonymize project and branch
+    _hash = hashlib.sha3_256((project + branch).encode()).hexdigest()
 
     # generate coverage badge
     if total_coverage >= 90:
@@ -33,12 +36,13 @@ def main(event, context):
 
     # upload
     s3_client.upload_fileobj(Fileobj=BytesIO(svg_file_string.encode()),
+                             ExtraArgs={'ContentType': ' image/svg+xml'},
                              Bucket=BADGE_UPLOADER_BUCKET,
-                             Key=f"{project}/{branch}.svg")
+                             Key=f"{_hash}.svg")
 
     # output
     return {
         "statusCode": 200,
         "headers": {"Content-Type": "application/json"},
-        "body": json.dumps({"url": f"https://s3.amazonaws.com/{BADGE_UPLOADER_BUCKET}/{project}/{branch}.svg"})
+        "body": json.dumps({"url": f"https://s3.amazonaws.com/{BADGE_UPLOADER_BUCKET}/{_hash}.svg"})
     }
