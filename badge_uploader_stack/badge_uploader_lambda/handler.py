@@ -36,7 +36,8 @@ def main(event, context):
 
     # upload
     s3_client.upload_fileobj(Fileobj=BytesIO(svg_file_string.encode()),
-                             ExtraArgs={'ContentType': ' image/svg+xml'},
+                             ExtraArgs={'ContentType': ' image/svg+xml',
+                                        'CacheControl': 'max-age=300'},
                              Bucket=BADGE_UPLOADER_BUCKET,
                              Key=f"{_hash}.svg")
 
